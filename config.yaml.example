@@ -1,0 +1,178 @@
+# ============================================================================
+# EmailAgent Configuration File
+# ============================================================================
+# Copy this file to ~/.emailagent/config.yaml and customize as needed.
+# This file controls all aspects of the job email tracker.
+
+# ----------------------------------------------------------------------------
+# Gmail Configuration
+# ----------------------------------------------------------------------------
+gmail:
+  # Path to OAuth credentials (downloaded from Google Cloud Console)
+  credentials_path: ~/.emailagent/credentials.json
+
+  # Path to store OAuth token (auto-generated after first login)
+  token_path: ~/.emailagent/token.json
+
+  # API request limits
+  max_results_per_query: 10000  # Max emails to fetch per scan
+  batch_size: 100               # Emails per API request
+
+  # Rate limiting (respect Gmail API quotas)
+  requests_per_second: 10       # Max 10 requests/second
+
+# ----------------------------------------------------------------------------
+# Extraction Configuration
+# ----------------------------------------------------------------------------
+extraction:
+  # Enable/disable AI fallback for ambiguous cases
+  # false = Pattern-only (fast, free, 70-80% accurate)
+  # true = Hybrid (slower, free, 90-95% accurate)
+  use_ai: false  # Default: pattern-only mode
+
+  # Confidence threshold for "Needs Review" flagging
+  confidence_threshold: 0.7  # Below this = low confidence
+
+  # AI triggers (only if use_ai = true)
+  ai_triggers:
+    low_confidence: true      # Use AI when pattern confidence < 0.7
+    unknown_company: true     # Use AI when company = "Unknown"
+    unclear_status: true      # Use AI when status unclear
+
+# ----------------------------------------------------------------------------
+# Ollama Configuration (only used if extraction.use_ai = true)
+# ----------------------------------------------------------------------------
+ollama:
+  # Ollama server URL
+  host: http://localhost:11434
+
+  # Model to use
+  model: llama3.2:3b
+
+  # Request timeout (seconds per email)
+  timeout: 30
+
+  # Retry settings
+  max_retries: 2
+  retry_delay: 5  # seconds
+
+# ----------------------------------------------------------------------------
+# Excel Configuration
+# ----------------------------------------------------------------------------
+excel:
+  # Path to Excel file
+  file_path: ~/job_applications.xlsx
+
+  # Sheet name
+  sheet_name: Applications
+
+  # Backup settings
+  auto_backup: true
+  backup_directory: ~/.emailagent/backups/
+  backup_retention_days: 7  # Delete backups older than this
+
+  # Auto-save frequency
+  save_after_n_emails: 100  # Save after processing N emails
+
+  # Formatting
+  use_conditional_formatting: true  # Status colors, conflict warnings
+  freeze_header: true               # Keep header visible when scrolling
+
+# ----------------------------------------------------------------------------
+# Deletion Configuration
+# ----------------------------------------------------------------------------
+deletion:
+  # Which statuses to delete
+  delete_applied: true
+  delete_rejected: true
+  delete_interviewing: false  # NEVER change to true
+  delete_offer: false         # NEVER change to true
+
+  # Safety keywords that prevent deletion
+  # (Even if status = Applied/Rejected, don't delete if contains these)
+  safety_keywords:
+    - interview
+    - phone screen
+    - video call
+    - next steps
+    - schedule
+    - meet with
+    - assessment
+    - take-home
+    - offer
+    - compensation
+    - urgent
+    - deadline
+    - password
+    - account
+    - verify
+
+  # Additional safety checks
+  never_delete_starred: true          # Keep starred emails
+  never_delete_with_attachments: false # Keep emails with attachments
+  never_delete_conflicts: true        # Keep conflict emails
+
+  # Minimum email age before deletion (days)
+  # 0 = allow same-day deletion
+  minimum_age_days: 0
+
+  # Batch deletion settings
+  batch_size: 50              # Emails per API call
+  delay_between_deletes: 0.1  # Seconds (rate limit compliance)
+  require_confirmation: true  # Ask user before deleting
+
+# ----------------------------------------------------------------------------
+# Logging Configuration
+# ----------------------------------------------------------------------------
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: INFO
+
+  # Log file settings
+  log_directory: ~/.emailagent/logs/
+  log_file_pattern: emailagent_{date}.log
+  max_log_size_mb: 10
+  retention_days: 30
+
+  # What to log
+  log_extractions: true   # Log company/position/status extracted
+  log_classifications: true  # Log status classifications
+  log_deletions: true     # Log all deletions (ALWAYS true for audit)
+  log_api_calls: false    # Log Gmail API calls (verbose, for debugging)
+
+# ----------------------------------------------------------------------------
+# CLI Display Settings
+# ----------------------------------------------------------------------------
+cli:
+  # Use colors in terminal output
+  use_colors: true
+
+  # Show progress bars
+  show_progress: true
+
+  # Verbose output by default
+  verbose: false
+
+  # Table formatting style
+  # Options: simple, grid, fancy, markdown
+  table_style: simple
+
+  # Pagination for long lists
+  paginate: true
+  items_per_page: 50
+
+# ----------------------------------------------------------------------------
+# Advanced Settings (rarely need to change)
+# ----------------------------------------------------------------------------
+advanced:
+  # Parallel processing (experimental)
+  parallel_extraction: false
+  max_workers: 4
+
+  # Caching
+  cache_enabled: true
+  cache_directory: ~/.emailagent/cache/
+  cache_ttl_hours: 24
+
+  # Performance tuning
+  max_body_length: 5000  # Max characters of email body to analyze

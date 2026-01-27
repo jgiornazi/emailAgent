@@ -1,0 +1,52 @@
+[
+  {
+    "id": "msg_interview_001",
+    "from": "recruiting@techcorp.com",
+    "subject": "Interview Request - Software Engineer",
+    "body": "Hi Jamal,\n\nThank you for your interest in TechCorp! We were impressed with your background and would like to move forward with an interview.\n\nWould you be available for a phone screen next week? Please let us know your availability.\n\nBest,\nTechCorp Recruiting",
+    "date": "2026-01-22T11:00:00",
+    "expected_company": "Techcorp",
+    "expected_status": "Interviewing",
+    "expected_position": "Software Engineer"
+  },
+  {
+    "id": "msg_interview_002",
+    "from": "talent@startup.io",
+    "subject": "Next Steps - Your Application",
+    "body": "Hi Jamal,\n\nGreat news! We'd like to schedule a video call to discuss the Senior Engineer role.\n\nPlease use the following Calendly link to book a time that works for you.\n\nLooking forward to speaking with you!",
+    "date": "2026-01-21T14:30:00",
+    "expected_company": "Startup",
+    "expected_status": "Interviewing",
+    "expected_position": "Senior Engineer"
+  },
+  {
+    "id": "msg_interview_003",
+    "from": "hr@datacompany.com",
+    "subject": "Technical Assessment - Data Engineer",
+    "body": "Hi Jamal,\n\nWe would like you to complete a technical assessment as the next step in our interview process.\n\nThe take-home assignment should take approximately 2-3 hours. Please submit within 5 days.\n\nGood luck!",
+    "date": "2026-01-20T09:00:00",
+    "expected_company": "Datacompany",
+    "expected_status": "Interviewing",
+    "expected_position": "Data Engineer"
+  },
+  {
+    "id": "msg_interview_004",
+    "from": "recruiting@bigtech.com",
+    "subject": "On-site Interview Invitation",
+    "body": "Dear Jamal,\n\nCongratulations on making it to the final round! We would like to invite you for an on-site interview at our headquarters.\n\nThe day will include meetings with the hiring manager and team members.\n\nPlease confirm your availability.",
+    "date": "2026-01-23T16:00:00",
+    "expected_company": "Bigtech",
+    "expected_status": "Interviewing",
+    "expected_position": "Not specified"
+  },
+  {
+    "id": "msg_interview_005",
+    "from": "jobs@cloudco.io",
+    "subject": "Schedule Your Interview",
+    "body": "Hi Jamal,\n\nWe're excited to meet you! Please schedule your interview using the link below.\n\nYou'll be meeting with our Engineering Lead to discuss your experience and the Platform Engineer role.\n\nSee you soon!",
+    "date": "2026-01-24T10:15:00",
+    "expected_company": "Cloudco",
+    "expected_status": "Interviewing",
+    "expected_position": "Platform Engineer"
+  }
+]

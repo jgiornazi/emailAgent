@@ -1,0 +1,52 @@
+[
+  {
+    "id": "msg_perplexity_001",
+    "from": "recruiting@perplexity.ai",
+    "subject": "Thank you for applying to Perplexity!",
+    "body": "Hi Jamal,\n\nThanks for applying to Perplexity! We've received your application and will review it shortly.\n\nWe will be in touch if your qualifications match our needs for the role. Thank you for taking the time to apply and we look forward to getting to know you better.\n\nThank you,\nPerplexity Recruiting",
+    "date": "2026-01-15T10:30:00",
+    "expected_company": "Perplexity",
+    "expected_status": "Applied",
+    "expected_position": "Not specified"
+  },
+  {
+    "id": "msg_plaid_001",
+    "from": "jobs@plaid.com",
+    "subject": "Thank you for your application to Plaid",
+    "body": "Thank you for your interest in Plaid! We wanted to let you know we received your application for Software Engineer - Platform, and we are delighted that you would consider joining our team.\n\nOur team will review your application and will be in touch if your qualifications match our needs for the role.",
+    "date": "2026-01-10T14:00:00",
+    "expected_company": "Plaid",
+    "expected_status": "Applied",
+    "expected_position": "Software Engineer"
+  },
+  {
+    "id": "msg_spire_001",
+    "from": "talent@spire.com",
+    "subject": "Application Received | Spire",
+    "body": "Thanks for applying to our Senior Software Engineer (Constellation Operations) position here at Spire, and certainly for your interest - We're excited to review your application and get to know you!\n\nIf it looks like there is a good match, one of our Talent Team members will reach out to you.",
+    "date": "2026-01-12T09:15:00",
+    "expected_company": "Spire",
+    "expected_status": "Applied",
+    "expected_position": "Senior Software Engineer"
+  },
+  {
+    "id": "msg_neuralink_001",
+    "from": "apply@neuralink.com",
+    "subject": "Jamal, your application was sent to Neuralink",
+    "body": "Your application was sent to Neuralink",
+    "date": "2026-01-08T16:45:00",
+    "expected_company": "Neuralink",
+    "expected_status": "Applied",
+    "expected_position": "Not specified"
+  },
+  {
+    "id": "msg_vercel_001",
+    "from": "talent@vercel.com",
+    "subject": "Thank you for applying to Vercel!",
+    "body": "We wanted to confirm that we received your application for the Software Engineer, CI/CD role at Vercel.\n\nThank you for applying! While we do receive a large number of applications daily, rest assured that we are committed to reviewing and responding to each application.",
+    "date": "2026-01-14T11:20:00",
+    "expected_company": "Vercel",
+    "expected_status": "Applied",
+    "expected_position": "Software Engineer"
+  }
+]
