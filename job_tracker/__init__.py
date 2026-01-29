@@ -48,6 +48,28 @@ from .classifier import (
     normalize_status,
 )
 
+from .excel_storage import (
+    ExcelStorage,
+    JobApplication,
+    ExcelUpdateResult,
+    create_excel_storage,
+    format_summary_table,
+    COLUMNS,
+    HEADERS,
+)
+
+from .ollama_client import (
+    OllamaClient,
+    OllamaConfig,
+    OllamaError,
+    OllamaConnectionError,
+    OllamaTimeoutError,
+    AIExtractionResult,
+    create_ollama_client,
+    ai_extract_email,
+    check_ollama_status,
+)
+
 __all__ = [
     # Patterns
     'GENERIC_PROVIDERS',
@@ -84,4 +106,24 @@ __all__ = [
     'is_protected_status',
     'validate_status',
     'normalize_status',
+
+    # Excel Storage
+    'ExcelStorage',
+    'JobApplication',
+    'ExcelUpdateResult',
+    'create_excel_storage',
+    'format_summary_table',
+    'COLUMNS',
+    'HEADERS',
+
+    # Ollama Client
+    'OllamaClient',
+    'OllamaConfig',
+    'OllamaError',
+    'OllamaConnectionError',
+    'OllamaTimeoutError',
+    'AIExtractionResult',
+    'create_ollama_client',
+    'ai_extract_email',
+    'check_ollama_status',
 ]

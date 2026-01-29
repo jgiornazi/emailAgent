@@ -97,14 +97,15 @@ def classify_status(subject: str, body: str) -> Tuple[str, int, List[str]]:
     # These phrases definitively indicate rejection even if "interview" appears
     strong_rejection_phrases = [
         r'not moving forward',
-        r"won'?t be advancing",
+        r"won['\u2019]?t be advancing",
+        r"won['\u2019]?t be moving forward",
         r'will not be moving forward',
         r'not move forward',
-        r'unfortunately.*not',
+        r'unfortunately',
         r'decided to not move forward',
         r'we are not moving forward',
-        r'wish you.*success.*job search',
-        r'best of luck.*job search',
+        r'wish you.*success.*(?:search|job search)',
+        r'best of luck.*(?:search|job search)',
     ]
 
     has_strong_rejection = False
@@ -114,9 +115,32 @@ def classify_status(subject: str, body: str) -> Tuple[str, int, List[str]]:
             break
 
     # If strong rejection phrase found and Rejected has matches,
-    # prioritize Rejected over Interviewing
+    # prioritize Rejected over everything else
     if has_strong_rejection and status_scores['Rejected'] >= 1:
         return 'Rejected', status_scores['Rejected'], matched_patterns['Rejected']
+
+    # Special handling: Check for strong application confirmation indicators
+    # These phrases definitively indicate Applied even if "interview" or
+    # "next steps" appear incidentally (e.g., "learn about our interview process")
+    strong_applied_phrases = [
+        r'thank you for (?:your )?(?:applying|application)',
+        r'thanks for applying',
+        r'application (?:has been )?received',
+        r'(?:we )?received your application',
+        r'application (?:has been )?submitted',
+    ]
+
+    has_strong_applied = False
+    for phrase in strong_applied_phrases:
+        if re.search(phrase, text, re.IGNORECASE):
+            has_strong_applied = True
+            break
+
+    # If strong applied phrase found and Applied has matches,
+    # prioritize Applied over Interviewing (but not over Offer/Rejected)
+    if has_strong_applied and status_scores['Applied'] >= 1:
+        if status_scores['Offer'] == 0 and status_scores['Rejected'] == 0:
+            return 'Applied', status_scores['Applied'], matched_patterns['Applied']
 
     # Determine best status
     # If multiple statuses have matches, use priority order with tie-breaking
@@ -141,12 +165,6 @@ def classify_status(subject: str, body: str) -> Tuple[str, int, List[str]]:
     if status_scores['Offer'] > 0 and status_scores['Rejected'] > 0:
         if status_scores['Offer'] >= status_scores['Rejected']:
             best_status = 'Offer'
-
-    # Special case: if Interviewing AND Applied both match,
-    # prefer Interviewing (more actionable)
-    if status_scores['Interviewing'] > 0 and status_scores['Applied'] > 0:
-        if status_scores['Interviewing'] >= status_scores['Applied']:
-            best_status = 'Interviewing'
 
     return best_status, best_score, matched_patterns.get(best_status, [])
 

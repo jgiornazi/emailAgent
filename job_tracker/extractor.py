@@ -20,6 +20,7 @@ from typing import Optional, Tuple, Dict, Any, List
 
 from .job_patterns import (
     GENERIC_PROVIDERS,
+    ATS_PROVIDERS,
     COMPILED_SUBJECT_COMPANY_PATTERNS,
     COMPILED_BODY_COMPANY_PATTERNS,
     COMPILED_POSITION_PATTERNS,
@@ -120,6 +121,18 @@ def extract_company_from_domain(email_address: str) -> Tuple[Optional[str], Opti
     # Try to find the company name in domain parts
     company_domain = None
 
+    # Extract local part for potential fallback
+    local_part = email_match.group(0).split('@')[0].lower()
+
+    # Generic local parts that don't indicate a company
+    generic_local_parts = {
+        'noreply', 'no-reply', 'donotreply', 'do-not-reply',
+        'jobs', 'careers', 'career', 'recruiting', 'recruitment',
+        'hr', 'hiring', 'apply', 'applications', 'talent',
+        'team', 'people', 'notifications', 'info', 'support',
+        'hello', 'contact', 'admin', 'mailer',
+    }
+
     # Check each part (skip TLDs like .com, .io, .ai, .org)
     for part in domain_parts[:-1]:  # Skip last part (TLD)
         # Skip generic subdomains
@@ -127,6 +140,14 @@ def extract_company_from_domain(email_address: str) -> Tuple[Optional[str], Opti
             continue
         # Skip if it's a generic provider
         if part.lower() in GENERIC_PROVIDERS:
+            # For ATS platforms, try extracting company from the email local part
+            # e.g. disney@myworkday.com -> "Disney", pax8inc@myworkday.com -> "Pax8"
+            if part.lower() in ATS_PROVIDERS and local_part and local_part not in generic_local_parts:
+                cleaned = re.sub(r'(?:inc|corp|llc|ltd|co|hq|jobs|careers|hr)$', '', local_part)
+                cleaned = cleaned.strip('-_.').replace('-', ' ').replace('_', ' ').replace('.', ' ')
+                cleaned = cleaned.strip().title()
+                if cleaned and len(cleaned) >= 2:
+                    return cleaned, 'sender'
             return None, None
         # Found a potential company name
         company_domain = part
@@ -429,16 +450,45 @@ def pattern_match_extraction(email: Dict[str, Any]) -> ExtractionResult:
     result.email_date = email.get('date')
     result.extraction_method = 'pattern'
 
+    sender = email.get('from', '')
+    subject = email.get('subject', '')
+    body = email.get('body', email.get('snippet', ''))
+
+    # LinkedIn Easy Apply handling
+    # These come from jobs-noreply@linkedin.com with subject like
+    # "Your application was sent to [Company]"
+    if 'linkedin' in sender.lower():
+        linkedin_company = re.search(
+            r'application was sent to ([^-|\n.]+)', subject, re.IGNORECASE
+        )
+        if not linkedin_company:
+            linkedin_company = re.search(
+                r'application was sent to ([^-|\n.]+)', body, re.IGNORECASE
+            )
+        if linkedin_company:
+            result.company = clean_text(linkedin_company.group(1), COMPANY_CLEANUP_PATTERNS)
+            result.company_source = 'subject'
+
+        # Try to extract role from body (LinkedIn often includes it)
+        linkedin_role = re.search(
+            r'(?:applied for|application for)\s+(?:the\s+)?([^-|\n.]+?)(?:\s+at\s+|\s*$)',
+            body, re.IGNORECASE
+        )
+        if linkedin_role:
+            result.position = clean_text(linkedin_role.group(1), POSITION_CLEANUP_PATTERNS)
+            result.position_source = 'body'
+
+        result.status = 'Applied'
+        result.status_matches = 1
+        return result
+
     # Extract company
     company, company_source = extract_company(email)
     result.company = company
     result.company_source = company_source
 
     # Extract position
-    position, position_source = extract_position(
-        email.get('subject', ''),
-        email.get('body', email.get('snippet', ''))
-    )
+    position, position_source = extract_position(subject, body)
     result.position = position
     result.position_source = position_source
 

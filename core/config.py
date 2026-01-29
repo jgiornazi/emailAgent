@@ -10,7 +10,7 @@ Priority: CLI flags > Environment Variables > config.yaml > defaults
 """
 
 import os
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
@@ -162,6 +162,10 @@ class Config:
     logging: LoggingConfig = field(default_factory=LoggingConfig)
     cli: CLIConfig = field(default_factory=CLIConfig)
     advanced: AdvancedConfig = field(default_factory=AdvancedConfig)
+
+    def to_dict(self) -> dict:
+        """Convert config to dictionary."""
+        return asdict(self)
 
 
 def _expand_path(value: Any) -> Any:

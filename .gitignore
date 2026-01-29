@@ -37,11 +37,17 @@ env/
 .DS_Store
 Thumbs.db
 
+# Environment variables
+.env
+.env.*
+
 # EmailAgent specific
 credentials.json
 token.json
+client_secret*.json
 *.xlsx
 !tests/fixtures/*.xlsx
+config.yaml
 
 # Logs
 logs/
@@ -50,6 +56,11 @@ logs/
 # Cache
 .cache/
 *.pyc
+
+# Distribution
+*.tar.gz
+*.whl
+pip-log.txt
 
 # Testing
 .coverage

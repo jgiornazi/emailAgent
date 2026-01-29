@@ -58,12 +58,30 @@ class GmailClient:
 
     # Job email search queries
     JOB_SEARCH_QUERIES = [
-        'subject:(application OR applied OR "thank you for applying")',
-        'subject:(interview OR "phone screen" OR "next steps")',
-        'subject:(offer OR "job offer" OR "offer letter")',
-        'subject:(rejection OR "not moving forward")',
-        '"your application" OR "application status"',
+        # Application confirmations
+        'subject:("thank you for applying" OR "application received" OR "application submitted" OR "your application")',
+
+        # Body-based application signals
+        '"your application" ("position" OR "role" OR "team" OR "company")',
+
+        # Interview scheduling — require job context alongside "interview"
+        'subject:(interview OR "phone screen") ("role" OR "position" OR "candidate" OR "schedule")',
+
+        # Rejections
+        '("not moving forward" OR "not selected" OR "position has been filled" OR "decided to pursue other candidates")',
+
+        # Offers
+        'subject:("job offer" OR "offer letter" OR "pleased to offer" OR "welcome to the team")',
+
+        # ATS/recruiting platform emails
+        'from:(greenhouse.io OR lever.co OR myworkdayjobs.com OR icims.com OR smartrecruiters.com OR jobvite.com OR ashbyhq.com)',
+
+        # LinkedIn Easy Apply confirmations
+        'from:linkedin.com subject:"your application was sent"',
     ]
+
+    # Exclude non-job email categories
+    CATEGORY_EXCLUSIONS = '-category:promotions -category:social -category:forums'
 
     def __init__(
         self,
@@ -102,6 +120,9 @@ class GmailClient:
         all_email_ids: set[str] = set()
 
         for query in self.JOB_SEARCH_QUERIES:
+            # Exclude promotional/social/forum emails
+            query = f"{query} {self.CATEGORY_EXCLUSIONS}"
+
             # Add date filter if specified
             if since_date:
                 date_str = since_date.strftime("%Y/%m/%d")

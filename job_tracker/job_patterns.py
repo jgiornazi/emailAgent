@@ -34,11 +34,13 @@ GENERIC_PROVIDERS: List[str] = [
     'live',
     'msn',
 
-    # ATS/Recruiting platforms (company name won't be in domain)
+    # ATS/Recruiting platforms (company name won't be in domain,
+    # but local part may contain the company name)
     'greenhouse',
     'lever',
     'workday',
     'myworkdayjobs',
+    'myworkday',
     'icims',
     'taleo',
     'jobvite',
@@ -83,6 +85,17 @@ GENERIC_PROVIDERS: List[str] = [
     'postmark',
     'sparkpost',
 ]
+
+# ATS/Recruiting platforms where the email local part (before @) often
+# contains the company name (e.g. disney@myworkday.com, pax8inc@myworkday.com)
+ATS_PROVIDERS: set = {
+    'greenhouse', 'lever', 'workday', 'myworkdayjobs', 'myworkday',
+    'icims', 'taleo', 'jobvite', 'smartrecruiters', 'applicantstack',
+    'bamboohr', 'workable', 'ashbyhq', 'breezy', 'jazz', 'recruiterbox',
+    'resumator', 'newton', 'pinpointhq', 'recruitee', 'comeet', 'fountain',
+    'rippling', 'gusto', 'deel', 'namely', 'paychex', 'adp', 'paylocity',
+    'paycom', 'ultipro', 'successfactors', 'cornerstone', 'ceridian', 'kronos',
+}
 
 # =============================================================================
 # COMPANY EXTRACTION PATTERNS
@@ -269,7 +282,8 @@ STATUS_PATTERNS: Dict[str, List[str]] = {
     'Rejected': [
         # Direct rejection phrases (strongest indicators)
         r'not moving forward',
-        r"won'?t be advancing",
+        r"won['\u2019]?t be advancing",
+        r"won['\u2019]?t be moving forward",
         r'will not be moving forward',
         r'not move forward',
         r'made the decision to not move forward',
@@ -286,7 +300,7 @@ STATUS_PATTERNS: Dict[str, List[str]] = {
 
         # Soft rejection phrases
         r'after (?:careful )?consideration.*not',
-        r'unfortunately.*(?:not|won\'t|will not)',
+        r"unfortunately.*(?:not|won['\u2019]t|will not)",
         r'unfortunately, we will not',
         r'unfortunately, we are not',
         r'regret to inform',
@@ -359,7 +373,9 @@ STATUS_PATTERNS: Dict[str, List[str]] = {
 
     'Interviewing': [
         # Interview scheduling (strongest indicators)
-        r'\binterview\b',
+        # Bare "interview" is too broad — require scheduling/action context
+        r'(?:schedule|invite|confirm).*\binterview\b',
+        r'\binterview\b.*(?:schedule|invite|confirm|available)',
         r'phone screen',
         r'video (?:call|interview|chat)',
         r'zoom (?:call|meeting|interview)',
@@ -374,7 +390,9 @@ STATUS_PATTERNS: Dict[str, List[str]] = {
         r'technical round',
 
         # Meeting/scheduling
-        r'next steps',
+        # "next steps" alone is too generic — require direct action language
+        r'(?:discuss|share|outline) (?:the )?next steps',
+        r'next steps (?:in|for) (?:the|your|our) (?:process|interview)',
         r'schedule (?:a )?(?:call|meeting|time|interview)',
         r'speak with',
         r'meet with(?: our| the)? team',
@@ -396,7 +414,6 @@ STATUS_PATTERNS: Dict[str, List[str]] = {
         # People involved
         r'hiring manager',
         r'recruiter',
-        r'talent (?:team|acquisition)',
         r'engineering (?:team|manager|lead)',
 
         # Availability
